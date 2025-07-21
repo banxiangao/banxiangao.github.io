@@ -1,114 +1,224 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倒计时页面</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-        h2 {
-            color: #333;
-            margin-top: 40px;
-        }
-        label {
-            font-size: 18px;
-            color: #555;
-            margin-right: 10px;
-        }
-        input[type="number"] {
-            width: 60px;
-            height: 30px;
-            padding: 5px;
-            margin-right: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0px 4px 6px rgba(0, 123, 255, 0.2);
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        #countdown {
-            width: 300px;
-            height: 100px;
-            background-color: #333;
-            color: white;
-            font-size: 28px;
-            line-height: 100px;
-            margin: 20px auto;
-            border-radius: 8px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Our Love Story</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", sans-serif;
+      background: linear-gradient(to bottom, #ffe0e9, #ffffff);
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    .music-player {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 10px;
+      padding: 10px 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      z-index: 999;
+    }
+    .music-player button {
+      background: #d63384;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      margin-right: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .music-player button:hover {
+      background: #b12d6d;
+    }
+    .music-player input[type="range"] {
+      width: 150px;
+      margin-right: 10px;
+    }
+    .music-player span {
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #d63384;
+      margin-top: 30px;
+      font-size: 3em;
+    }
+    .subtitle {
+      font-size: 1.2em;
+      color: #666;
+      margin-bottom: 40px;
+    }
+    .timeline ul {
+      list-style: none;
+      padding: 0;
+    }
+    .timeline li {
+      background: #fff0f5;
+      margin: 10px 0;
+      padding: 15px;
+      border-left: 5px solid #d63384;
+      text-align: left;
+    }
+    .album {
+      margin-bottom: 40px;
+      background-color: #fff7f9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+    .album h3 {
+      color: #d63384;
+      margin-bottom: 5px;
+    }
+    .album p {
+      font-size: 0.95em;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .album .photos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+    }
+    .album img {
+      width: 100%;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .album img:hover {
+      transform: scale(1.02);
+    }
+    .notes {
+      margin-top: 40px;
+      font-style: italic;
+      background-color: #fff8fb;
+      padding: 20px;
+      border-radius: 10px;
+      line-height: 1.6em;
+    }
+  </style>
 </head>
 <body>
 
-<h2>输入倒计时总时长</h2>
-<label for="hour">小时：</label>
-<input type="number" id="hour" value="0" min="0" step="1">
-<label for="minute">分钟：</label>
-<input type="number" id="minute" value="0" min="0" max="59" step="1">
-<label for="second">秒：</label>
-<input type="number" id="second" value="0" min="0" max="59" step="1">
-<br><br>
-<button onclick="startCountdown()">开始</button>
+  <!-- 背景音乐 -->
+  <audio id="bg-music" src="BGM.mp3" preload="auto"></audio>
 
-<div id="countdown">00:00:00</div>
+  <!-- 音乐播放器控件 -->
+  <div class="music-player">
+    <button id="togglePlay">⏸️</button>
+    <input type="range" id="seekBar" value="0" min="0" max="100" step="0.1">
+    <span id="currentTime">00:00</span>
+  </div>
 
-<script>
-    let interval;
+  <div class="container">
+    <h1>Our Love Story</h1>
+    <p class="subtitle">From the moment we met...</p>
 
-    function startCountdown() {
-        // 清除之前的倒计时
-        clearInterval(interval);
+    <section class="timeline">
+      <h2>Love Memories</h2>
+      <ul>
+        <li><strong>2024-11-17：</strong> 初识</li>
+        <li><strong>2024-11-23：</strong> 初见</li>
+        <li><strong>2024-12-7：</strong> 相爱</li>
+        <li><strong>2024-1-1：</strong> 爱的初体验</li>
+        <li><strong>Till the end：</strong> 爱 未完待续</li>
+      </ul>
+    </section>
 
-        let hour = parseInt(document.getElementById('hour').value, 10);
-        let minute = parseInt(document.getElementById('minute').value, 10);
-        let second = parseInt(document.getElementById('second').value, 10);
+    <section class="gallery">
+      <h2>Travel Memories</h2>
 
-        let totalSeconds = hour * 3600 + minute * 60 + second;
-        
-        if (isNaN(totalSeconds) || totalSeconds <= 0) {
-            alert("请输入有效的时长！");
-            return;
-        }
+      <div class="album">
+        <h3>📍 爱之旅</h3>
+        <p>这是我们一起的美好回忆~</p>
+        <div class="photos">
+          <img src="shanghai1.jpg" alt="地点1" />
+          <img src="shanghai2.jpg" alt="迪士尼" />
+        </div>
+      </div>
 
-        interval = setInterval(() => {
-            totalSeconds--;
+      <div class="album">
+        <h3>🍜 爱之味</h3>
+        <p>我们一起吃的每顿饭，都是爱的味道。</p>
+        <div class="photos">
+          <img src="food1.jpg" alt="火锅" />
+          <img src="food2.jpg" alt="早餐" />
+        </div>
+      </div>
 
-            if (totalSeconds <= 0) {
-                clearInterval(interval);
-            }
+      <div class="album">
+        <h3>💑 爱的日常</h3>
+        <p>平凡日子中，我们的小确幸。</p>
+        <div class="photos">
+          <img src="daily1.jpg" alt="看电影" />
+          <img src="daily2.jpg" alt="自拍" />
+        </div>
+      </div>
+    </section>
 
-            let hours = Math.floor(totalSeconds / 3600);
-            let minutes = Math.floor((totalSeconds - hours * 3600) / 60);
-            let seconds = totalSeconds - hours * 3600 - minutes * 60;
+    <section class="notes">
+      <h2>一些话</h2>
+      <p>亲爱的，感谢你出现在我的生命里。未来的日子，让我们一起走下去，无论风雨。</p>
+    </section>
+  </div>
 
-            hours = String(hours).padStart(2, '0');
-            minutes = String(minutes).padStart(2, '0');
-            seconds = String(seconds).padStart(2, '0');
+  <script>
+    const music = document.getElementById("bg-music");
+    const toggleBtn = document.getElementById("togglePlay");
+    const seekBar = document.getElementById("seekBar");
+    const currentTimeLabel = document.getElementById("currentTime");
 
-            document.getElementById('countdown').textContent = `${hours}:${minutes}:${seconds}`;
+    // 初始化音量
+    music.volume = 0.5;
 
-        }, 1000);
+    // 播放或暂停按钮逻辑
+    toggleBtn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        toggleBtn.textContent = "⏸️";
+      } else {
+        music.pause();
+        toggleBtn.textContent = "▶️";
+      }
+    });
+
+    // 更新时间标签
+    function formatTime(seconds) {
+      const min = Math.floor(seconds / 60);
+      const sec = Math.floor(seconds % 60);
+      return `${min.toString().padStart(2, "0")}:${sec.toString().padStart(2, "0")}`;
     }
-</script>
 
+    // 更新进度条和时间
+    music.addEventListener("timeupdate", () => {
+      seekBar.value = (music.currentTime / music.duration) * 100;
+      currentTimeLabel.textContent = formatTime(music.currentTime);
+    });
+
+    // 拖动进度条
+    seekBar.addEventListener("input", () => {
+      music.currentTime = (seekBar.value / 100) * music.duration;
+    });
+
+    // 自动播放
+    window.addEventListener("DOMContentLoaded", () => {
+      music.play().catch(() => {
+        toggleBtn.textContent = "▶️";
+      });
+    });
+  </script>
 </body>
 </html>
